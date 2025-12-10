@@ -1,0 +1,32 @@
+{
+  "accountAssociation": {
+    "header": "TODO_REPLACE_WITH_BASE64_HEADER",
+    "payload": "TODO_REPLACE_WITH_BASE64_PAYLOAD",
+    "signature": "TODO_REPLACE_WITH_BASE64_SIGNATURE"
+  },
+  "miniapp": {
+    "version": "1",
+    "name": "LuckyDraw",
+    "homeUrl": "https://luckydraw-miniapp.vercel.app/",
+    "iconUrl": "https://luckydraw-miniapp.vercel.app/assets/icon.png",
+    "splashImageUrl": "https://luckydraw-miniapp.vercel.app/assets/splash.png",
+    "splashBackgroundColor": "#020617",
+    "subtitle": "Spin for numbers, answers, or a random pick.",
+    "description": "LuckyDraw is a tiny randomizer hub: roll a number, pull a yes/no/maybe, or pick a random item from your list.",
+    "primaryCategory": "games",
+    "tags": [
+      "random",
+      "picker",
+      "fun"
+    ],
+    "heroImageUrl": "https://luckydraw-miniapp.vercel.app/assets/hero.png",
+    "tagline": "Spin for numbers, answers, or a random pick.",
+    "ogTitle": "LuckyDraw",
+    "ogDescription": "LuckyDraw is a tiny randomizer hub: roll a number, pull a yes/no/maybe, or pick a random item from your list.",
+    "ogImageUrl": "https://luckydraw-miniapp.vercel.app/assets/hero.png",
+    "screenshotUrls": [
+      "https://luckydraw-miniapp.vercel.app/assets/screenshot-1.png"
+    ],
+    "noindex": true
+  }
+}
