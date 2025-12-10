@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>LuckyDraw</title>
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="LuckyDraw" />
+  <meta property="og:description" content="LuckyDraw is a tiny randomizer hub: roll a number, pull a yes/no/maybe, or pick a random item from your list." />
+  <meta property="og:image" content="https://luckydraw-miniapp.vercel.app/assets/hero.png" />
+  <meta property="og:url" content="https://luckydraw-miniapp.vercel.app/" />
+  <meta property="og:type" content="website" />
+
+  <!-- Farcaster Mini App embed -->
+  <meta
+    name="fc:miniapp"
+    content='{
+      "version":"1",
+      "imageUrl":"https://luckydraw-miniapp.vercel.app/assets/embed-3x2.png",
+      "button":{
+        "title":"LuckyDraw",
+        "action":{
+          "type":"launch_frame",
+          "name":"LuckyDraw",
+          "url":"https://luckydraw-miniapp.vercel.app/",
+          "splashImageUrl":"https://luckydraw-miniapp.vercel.app/assets/splash.png",
+          "splashBackgroundColor":"#020617"
+        }
+      }
+    }'
+  />
+
+  <!-- Backward-compatible Frame meta -->
+  <meta
+    name="fc:frame"
+    content='{
+      "version":"1",
+      "imageUrl":"https://luckydraw-miniapp.vercel.app/assets/embed-3x2.png",
+      "button":{
+        "title":"LuckyDraw",
+        "action":{
+          "type":"launch_frame",
+          "name":"LuckyDraw",
+          "url":"https://luckydraw-miniapp.vercel.app/",
+          "splashImageUrl":"https://luckydraw-miniapp.vercel.app/assets/splash.png",
+          "splashBackgroundColor":"#020617"
+        }
+      }
+    }'
+  />
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #020617, #020617 55%, #000000 100%);
+      color: #e5e7eb;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+    .card {
+      background: rgba(15, 23, 42, 0.96);
+      border-radius: 24px;
+      padding: 18px 16px 14px;
+      max-width: 420px;
+      width: 100%;
+      box-shadow: 0 22px 50px rgba(15, 23, 42, 0.95);
+      border: 1px solid rgba(148, 163, 184, 0.5);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-height: 620px;
+    }
+    .header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+    }
+    .title {
+      font-size: 1.25rem;
+      font-weight: 700;
+    }
+    .env-pill {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      padding: 4px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      color: #9ca3af;
+    }
+    .subtitle {
+      font-size: 0.82rem;
+      color: #9ca3af;
+    }
+    .tabs {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 6px;
+      margin-top: 4px;
+    }
+    .tab-btn {
+      border-radius: 999px;
+      border: none;
+      padding: 5px 0;
+      cursor: pointer;
+      font-size: 0.75rem;
+      font-weight: 600;
+      background: rgba(15, 23, 42, 0.96);
+      color: #e5e7eb;
+      border: 1px solid rgba(55, 65, 81, 0.9);
+    }
+    .tab-btn.active {
+      background: linear-gradient(135deg, #22c55e, #14b8a6);
+      color: #020617;
+      box-shadow: 0 8px 18px rgba(34, 197, 94, 0.55);
+      border-color: transparent;
+    }
+    .mode-shell {
+      flex: 1;
+      min-height: 0;
+      display: flex;
+      align-items: stretch;
+      justify-content: center;
+      padding-top: 6px;
+    }
+    .mode-panel {
+      width: 100%;
+      display: none;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .mode-panel.active {
+      display: flex;
+    }
+    .box {
+      background: #020617;
+      border-radius: 18px;
+      border: 1px solid rgba(55, 65, 81, 0.9);
+      padding: 10px 10px 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .box-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.78rem;
+      color: #9ca3af;
+    }
+    .badge {
+      font-size: 0.7rem;
+      padding: 2px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.6);
+    }
+    .big-result {
+      font-size: 2.1rem;
+      font-weight: 700;
+      text-align: center;
+      letter-spacing: 0.08em;
+      margin-top: 4px;
+    }
+    .small-label {
+      font-size: 0.78rem;
+      text-align: center;
+      color: #9ca3af;
+    }
+    .row {
+      display: flex;
+      gap: 6px;
+      margin-top: 4px;
+    }
+    .ctrl-btn {
+      flex: 1;
+      border-radius: 999px;
+      border: none;
+      padding: 7px 0;
+      cursor: pointer;
+      font-size: 0.78rem;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+    }
+    .ctrl-btn.primary {
+      background: linear-gradient(135deg, #22c55e, #14b8a6);
+      color: #020617;
+      box-shadow: 0 8px 18px rgba(34, 197, 94, 0.55);
+    }
+    .ctrl-btn.secondary {
+      background: rgba(15, 23, 42, 0.96);
+      color: #e5e7eb;
+      border: 1px solid rgba(148, 163, 184, 0.6);
+    }
+    .input-inline {
+      display: flex;
+      gap: 6px;
+      margin-top: 4px;
+    }
+    .input-inline input {
+      flex: 1;
+      border-radius: 999px;
+      border: 1px solid rgba(55, 65, 81, 0.9);
+      background: #020617;
+      color: #e5e7eb;
+      padding: 6px 10px;
+      font-size: 0.8rem;
+      outline: none;
+    }
+    textarea {
+      width: 100%;
+      min-height: 70px;
+      resize: vertical;
+      border-radius: 14px;
+      border: 1px solid rgba(55, 65, 81, 0.9);
+      background: #020617;
+      color: #e5e7eb;
+      padding: 8px 10px;
+      font-size: 0.8rem;
+      outline: none;
+    }
+    textarea::placeholder,
+    input::placeholder {
+      color: #6b7280;
+    }
+    .footer-row {
+      font-size: 0.74rem;
+      color: #6b7280;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 4px;
+      border-top: 1px dashed rgba(55, 65, 81, 0.8);
+    }
+  </style>
+</head>
+<body>
+  <main class="card">
+    <header>
+      <div class="header-row">
+        <div class="title">LuckyDraw</div>
+        <div class="env-pill" id="env-label">web</div>
+      </div>
+      <p class="subtitle">Spin for numbers, answers, or a random pick.</p>
+    </header>
+
+    <nav class="tabs" aria-label="Modes">
+      <button class="tab-btn active" data-mode="number">Number</button>
+      <button class="tab-btn" data-mode="answer">Yes / No</button>
+      <button class="tab-btn" data-mode="list">List picker</button>
+    </nav>
+
+    <section class="mode-shell">
+      <!-- Number mode -->
+      <section class="mode-panel active" id="mode-number">
+        <div class="box">
+          <div class="box-header">
+            <span>Random number</span>
+            <span class="badge" id="number-range-label">1 – 100</span>
+          </div>
+          <div class="big-result" id="number-result">—</div>
+          <div class="small-label" id="number-last-label">No rolls yet.</div>
+          <div class="input-inline">
+            <input type="number" id="min-input" placeholder="Min" value="1" />
+            <input type="number" id="max-input" placeholder="Max" value="100" />
+          </div>
+          <div class="row">
+            <button class="ctrl-btn primary" id="number-roll-btn">Roll</button>
+            <button class="ctrl-btn secondary" id="number-quick-btn">1–10</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Answer mode -->
+      <section class="mode-panel" id="mode-answer">
+        <div class="box">
+          <div class="box-header">
+            <span>Yes / No / Maybe</span>
+            <span class="badge" id="answer-weight-label">Balanced</span>
+          </div>
+          <div class="big-result" id="answer-result">?</div>
+          <div class="small-label" id="answer-last-label">Ask a question in your head, then spin.</div>
+          <div class="row">
+            <button class="ctrl-btn primary" id="answer-spin-btn">Spin</button>
+            <button class="ctrl-btn secondary" id="answer-bias-btn">Bias: Neutral</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- List picker -->
+      <section class="mode-panel" id="mode-list">
+        <div class="box">
+          <div class="box-header">
+            <span>List picker</span>
+            <span class="badge" id="list-count-label">0 items</span>
+          </div>
+          <div class="big-result" id="list-result">—</div>
+          <div class="small-label" id="list-last-label">Add items (one per line) and pick.</div>
+          <textarea id="list-input" placeholder="coffee place A
+coffee place B
+coffee place C"></textarea>
+          <div class="row">
+            <button class="ctrl-btn primary" id="list-pick-btn">Pick</button>
+            <button class="ctrl-btn secondary" id="list-shuffle-btn">Shuffle order</button>
+          </div>
+        </div>
+      </section>
+    </section>
+
+    <footer class="footer-row">
+      <span id="footer-hint">Tip: Use list mode to pick where to eat.</span>
+      <span id="footer-mode">Mode: web</span>
+    </footer>
+  </main>
+
+  <script src="/luckydraw-ui.js"></script>
+  <script type="module" src="/script.js"></script>
+</body>
+</html>
